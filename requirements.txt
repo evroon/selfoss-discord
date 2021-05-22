@@ -1,0 +1,6 @@
+argparse
+requests
+discord
+bs4
+python-dotenv
+mypy
