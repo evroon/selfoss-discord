@@ -1,5 +1,7 @@
 # selfoss-discord
 
+![Preview](https://raw.githubusercontent.com/evroon/selfoss-discord/evroon-initial/etc/preview.png)
+
 Send RSS updates from Selfoss to Discord.
 
 Fetches new RSS items from `/items` and sends a message to discord for each new RSS item. The messages are sent in specific Discord channels that are created based on the RSS feed's name.
