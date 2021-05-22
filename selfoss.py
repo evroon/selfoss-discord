@@ -9,21 +9,29 @@ import os
 import datetime
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from typing import Dict, List, Any, cast, Optional, TypeVar
 
 time_format = "%Y-%m-%d %H:%M:%S"
 max_message_chars = 2000
 
+# Type cast helper
+T = TypeVar('T')
+def assert_type(arg: Optional[T]) -> T:
+    assert arg is not None
+    return arg
 
-def get_tree(feed):
+
+def get_tree(feed: str) -> List[Dict[str, Any]]:
     req = requests.get(feed)
-    return json.loads(req.content)
+    json_data = json.loads(req.content)
+    return cast(List[Dict[str, Any]], json_data)
 
 
-def new_items(root, last_update_filename, oldpubdate):
+def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpubdate: datetime.datetime) -> List[Any]:
     items = []
     latest = datetime.datetime.now() - datetime.timedelta(days=3*365)
 
-    for item in root:
+    for item in json_dict:
         timestamp = datetime.datetime.strptime(item['updatetime'][:-3], time_format)
 
         if timestamp > oldpubdate:
@@ -69,13 +77,12 @@ if __name__ == '__main__':
     server_id = os.getenv('DISCORD_SERVER_ID')
 
 
-    async def my_background_task(items):
+    async def my_background_task(items: List[Any]) -> None:
         await client.wait_until_ready()
-        invalid_channels = {}
 
         for item in items:
             source = item['sourcetitle']
-            guild = client.get_guild(int(server_id))
+            guild = client.get_guild(int(assert_type(server_id)))
             channel_name = source.lower().replace(' ', '-')
             channel = discord.utils.get(guild.channels, name=channel_name)
 
@@ -97,7 +104,7 @@ if __name__ == '__main__':
         await client.close()
 
     @client.event
-    async def on_ready():
+    async def on_ready() -> None:
         print(f'Logged in as: {client.user.name}')
 
 
