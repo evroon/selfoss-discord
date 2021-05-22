@@ -1,10 +1,15 @@
 # selfoss-discord
 
-![Preview](https://raw.githubusercontent.com/evroon/selfoss-discord/evroon-initial/etc/preview.png)
+
+[![Check Python syntax and typing](https://github.com/evroon/selfoss-discord/actions/workflows/mypy.yaml/badge.svg)](https://github.com/evroon/selfoss-discord/actions/workflows/mypy.yaml)
 
 Send RSS updates from Selfoss to Discord.
 
-Fetches new RSS items from `/items` and sends a message to discord for each new RSS item. The messages are sent in specific Discord channels that are created based on the RSS feed's name.
+The Python script fetches new RSS items from `<selfoss_url>/items` and sends a message to discord for each new RSS item. The messages are sent in specific Discord channels that are created based on the RSS feed's name.
+
+Preview of an RSS update message in Discord: (using [msfs-rss](https://github.com/evroon/msfs-rss))
+
+![Preview](https://raw.githubusercontent.com/evroon/selfoss-discord/main/etc/preview.png)
 
 ## Usage
 You can update selfoss and send messages to discord hourly by opening crontab (`sudo crontab -e`) adding the following line:
