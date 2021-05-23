@@ -42,7 +42,6 @@ def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpub
 
     for item in json_dict:
         item['timestamp'] = utc_to_local(parse_datetime(item['datetime'] + "00"))
-        print(item['timestamp'], oldpubdate, latest)
 
         if item['timestamp'] > oldpubdate:
             items.append(item)
