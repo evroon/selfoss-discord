@@ -12,6 +12,13 @@ Preview of an RSS update message in Discord: (using [msfs-rss](https://github.co
 ![Preview](https://raw.githubusercontent.com/evroon/selfoss-discord/main/etc/preview.png)
 
 ## Usage
+Create a bot in Discord with permissions to send manages and manage channels for the server you want to send messages to.
+Create a file called `.env` with the following content:
+```bash
+DISCORD_TOKEN="your discord bot token"
+DISCORD_SERVER_ID="the ID of your server/guild"
+```
+
 You can update selfoss and send messages to discord hourly by opening crontab (`sudo crontab -e`) adding the following line:
 ```bash
 0 * * * * sudo -Hu www-data php /var/www/selfoss/cliupdate.php && sudo -Hu <username> python3 /path/to/selfoss.py https://selfoss.domain.com /path/to/last-update
