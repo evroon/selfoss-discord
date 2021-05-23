@@ -40,10 +40,10 @@ def get_tree(feed: str) -> List[Dict[str, Any]]:
 
 def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpubdate: datetime.datetime) -> List[Any]:
     items = []
-    latest = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=3*365)
+    latest = datetime.datetime.now(timezone) - datetime.timedelta(days=3*365)
 
     for item in json_dict:
-        item['timestamp'] = utc_to_local(parse_datetime(item['datetime'] + "00"))
+        item['timestamp'] = parse_datetime(item['datetime'] + "00")
 
         if item['timestamp'] > oldpubdate:
             items.append(item)
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
             soup = BeautifulSoup(item['content'], features="html.parser")
             content = soup.get_text().replace('\n\n', '\n')
-            pub_datetime = item['timestamp'].strftime(time_format_display)
+            pub_datetime = utc_to_local(item['timestamp']).strftime(time_format_display)
 
             if len(content) > max_message_chars:
                 content = content[:max_message_chars-1]
