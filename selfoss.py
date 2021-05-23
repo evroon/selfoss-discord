@@ -11,7 +11,8 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from typing import Dict, List, Any, cast, Optional, TypeVar
 
-time_format = "%Y-%m-%d %H:%M:%S"
+time_format = "%Y-%m-%d %H:%M:%S%z"
+time_format_display = "%d %b %Y at %H:%M"
 max_message_chars = 2000
 
 # Type cast helper
@@ -19,6 +20,10 @@ T = TypeVar('T')
 def assert_type(arg: Optional[T]) -> T:
     assert arg is not None
     return arg
+
+
+def parse_datetime(time_str: str) -> datetime.datetime:
+    return datetime.datetime.strptime(time_str, time_format)
 
 
 def get_tree(feed: str) -> List[Dict[str, Any]]:
@@ -32,12 +37,12 @@ def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpub
     latest = datetime.datetime.now() - datetime.timedelta(days=3*365)
 
     for item in json_dict:
-        timestamp = datetime.datetime.strptime(item['datetime'][:-3], time_format)
+        item['timestamp'] = parse_datetime(item['datetime'] + "00")
 
-        if timestamp > oldpubdate:
+        if item['timestamp'] > oldpubdate:
             items.append(item)
 
-        latest = max(latest, timestamp)
+        latest = max(latest, item['timestamp'])
 
     if items:
         with open(last_update_filename, 'w') as f:
@@ -63,9 +68,12 @@ if __name__ == '__main__':
 
     with open(args.last_update_filename, 'r') as handle:
         oldpubdate_formatted = handle.read().strip()
-        oldpubdate = datetime.datetime.strptime(oldpubdate_formatted, time_format)
+        oldpubdate = parse_datetime(oldpubdate_formatted)
 
-    root = get_tree(f"{args.selfoss}/items?updatedsince={oldpubdate_formatted}&items=200")
+    items_url = f"{args.selfoss}/items?updatedsince={oldpubdate_formatted[:-5]}&items=200"
+    print(f'Fetching items from: {items_url}')
+
+    root = get_tree(items_url)
     items = new_items(root, args.last_update_filename, oldpubdate)
 
     if not items:
@@ -91,6 +99,7 @@ if __name__ == '__main__':
 
             soup = BeautifulSoup(item['content'], features="html.parser")
             content = soup.get_text().replace('\n\n', '\n')
+            pub_datetime = item['timestamp'].strftime(time_format_display)
 
             if len(content) > max_message_chars:
                 content = content[:max_message_chars-1]
@@ -98,7 +107,7 @@ if __name__ == '__main__':
             embed = discord.Embed(title=item['title'], url=item['link'], description=content)
             embed.set_author(name=source)
             embed.set_thumbnail(url=f"{args.selfoss}/favicons/{item['icon']}")
-            embed.set_footer(text=item['datetime'][:-3])
+            embed.set_footer(text=pub_datetime)
             await channel.send(embed=embed)
 
         await client.close()
