@@ -34,7 +34,7 @@ def get_tree(feed: str) -> List[Dict[str, Any]]:
 
 def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpubdate: datetime.datetime) -> List[Any]:
     items = []
-    latest = datetime.datetime.now() - datetime.timedelta(days=3*365)
+    latest = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=3*365)
 
     for item in json_dict:
         item['timestamp'] = parse_datetime(item['datetime'] + "00")
