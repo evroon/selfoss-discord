@@ -32,7 +32,7 @@ def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpub
     latest = datetime.datetime.now() - datetime.timedelta(days=3*365)
 
     for item in json_dict:
-        timestamp = datetime.datetime.strptime(item['updatetime'][:-3], time_format)
+        timestamp = datetime.datetime.strptime(item['datetime'][:-3], time_format)
 
         if timestamp > oldpubdate:
             items.append(item)
