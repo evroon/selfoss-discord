@@ -4,3 +4,5 @@ discord
 bs4
 python-dotenv
 mypy
+pytz
+

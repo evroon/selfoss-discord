@@ -7,10 +7,12 @@ import discord
 import asyncio
 import os
 import datetime
+import pytz
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from typing import Dict, List, Any, cast, Optional, TypeVar
 
+timezone = pytz.timezone('Europe/Amsterdam')
 time_format = "%Y-%m-%d %H:%M:%S%z"
 time_format_display = "%d %b %Y at %H:%M"
 max_message_chars = 2000
@@ -27,7 +29,7 @@ def parse_datetime(time_str: str) -> datetime.datetime:
 
 
 def utc_to_local(utc_dt: datetime.datetime) -> datetime.datetime:
-    return utc_dt.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+    return utc_dt.replace(tzinfo=datetime.timezone.utc).astimezone(tz=timezone)
 
 
 def get_tree(feed: str) -> List[Dict[str, Any]]:
