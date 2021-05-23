@@ -26,6 +26,10 @@ def parse_datetime(time_str: str) -> datetime.datetime:
     return datetime.datetime.strptime(time_str, time_format)
 
 
+def utc_to_local(utc_dt; datetime.datetime) -> datetime.datetime:
+    return utc_dt.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+
+
 def get_tree(feed: str) -> List[Dict[str, Any]]:
     req = requests.get(feed)
     json_data = json.loads(req.content)
@@ -37,7 +41,8 @@ def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpub
     latest = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=3*365)
 
     for item in json_dict:
-        item['timestamp'] = parse_datetime(item['datetime'] + "00")
+        item['timestamp'] = utc_to_local(parse_datetime(item['datetime'] + "00"))
+        print(item['timestamp'], oldpubdate, latest)
 
         if item['timestamp'] > oldpubdate:
             items.append(item)
@@ -68,7 +73,7 @@ if __name__ == '__main__':
 
     with open(args.last_update_filename, 'r') as handle:
         oldpubdate_formatted = handle.read().strip()
-        oldpubdate = parse_datetime(oldpubdate_formatted)
+        oldpubdate = utc_to_local(parse_datetime(oldpubdate_formatted))
 
     items_url = f"{args.selfoss}/items?updatedsince={oldpubdate_formatted[:-5]}&items=200"
     print(f'Fetching items from: {items_url}')
@@ -87,6 +92,7 @@ if __name__ == '__main__':
 
     async def my_background_task(items: List[Any]) -> None:
         await client.wait_until_ready()
+        print(f'Sending {len(items)} messages.')
 
         for item in items:
             source = item['sourcetitle']
