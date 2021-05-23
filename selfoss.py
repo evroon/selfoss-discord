@@ -26,7 +26,7 @@ def parse_datetime(time_str: str) -> datetime.datetime:
     return datetime.datetime.strptime(time_str, time_format)
 
 
-def utc_to_local(utc_dt; datetime.datetime) -> datetime.datetime:
+def utc_to_local(utc_dt: datetime.datetime) -> datetime.datetime:
     return utc_dt.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
 
 
