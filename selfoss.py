@@ -65,7 +65,7 @@ if __name__ == '__main__':
         oldpubdate_formatted = handle.read().strip()
         oldpubdate = datetime.datetime.strptime(oldpubdate_formatted, time_format)
 
-    root = get_tree(f"{args.selfoss}/items?updatedsince={oldpubdate_formatted}")
+    root = get_tree(f"{args.selfoss}/items?updatedsince={oldpubdate_formatted}&items=200")
     items = new_items(root, args.last_update_filename, oldpubdate)
 
     if not items:
