@@ -29,7 +29,7 @@ def parse_datetime(time_str: str) -> datetime.datetime:
 
 
 def utc_to_local(utc_dt: datetime.datetime) -> datetime.datetime:
-    return utc_dt.replace(tzinfo=datetime.timezone.utc).astimezone(tz=timezone)
+    return utc_dt.astimezone(tz=timezone)
 
 
 def get_tree(feed: str) -> List[Dict[str, Any]]:
