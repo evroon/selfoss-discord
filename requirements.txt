@@ -6,3 +6,4 @@ python-dotenv
 mypy
 pytz
 types-requests
+types-pytz
