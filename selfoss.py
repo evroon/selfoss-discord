@@ -81,6 +81,10 @@ if __name__ == '__main__':
         help='discord server id'
     )
     args = parser.parse_args()
+    
+    if not os.path.exists(args.last_update_filename):
+        with open(args.last_update_filename, 'w') as f:
+            f.write((datetime.datetime.now() - datetime.timedelta(days=3*365)).strftime(time_format) + '+0000')
 
     with open(args.last_update_filename, 'r') as handle:
         oldpubdate_formatted = handle.read().strip()
