@@ -70,6 +70,16 @@ if __name__ == '__main__':
         'last_update_filename',
         help='File to save last run time in.'
     )
+    parser.add_argument(
+        '--token',
+        type=str,
+        help='discord bot token'
+    )
+    parser.add_argument(
+        '--server-id',
+        type=str,
+        help='discord server id'
+    )
     args = parser.parse_args()
 
     with open(args.last_update_filename, 'r') as handle:
@@ -87,6 +97,9 @@ if __name__ == '__main__':
 
     client = discord.Client()
     load_dotenv()
+    
+    os.environ['DISCORD_TOKEN'] = args.token
+    os.environ['DISCORD_SERVER_ID'] = args.server_id
     token = os.getenv('DISCORD_TOKEN')
     server_id = os.getenv('DISCORD_SERVER_ID')
 
