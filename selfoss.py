@@ -81,12 +81,12 @@ if __name__ == '__main__':
         help='discord server id'
     )
     parser.add_argument(
-        '--disable-ssl-verification',
+        '--disable-verify-ssl',
         action='store_true',
         help='disable verification of ssl certs when accessing selfoss'
     )
     args = parser.parse_args()
-    
+
     if not os.path.exists(args.last_update_filename):
         with open(args.last_update_filename, 'w') as f:
             f.write((datetime.datetime.now() - datetime.timedelta(days=3*365)).strftime(time_format) + '+0000')
