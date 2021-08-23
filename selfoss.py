@@ -32,8 +32,8 @@ def utc_to_local(utc_dt: datetime.datetime) -> datetime.datetime:
     return utc_dt.astimezone(tz=timezone)
 
 
-def get_tree(feed: str) -> List[Dict[str, Any]]:
-    req = requests.get(feed)
+def get_tree(feed: str, disable_verify_ssl: bool) -> List[Dict[str, Any]]:
+    req = requests.get(feed, verify=not disable_verify_ssl)
     json_data = json.loads(req.content)
     return cast(List[Dict[str, Any]], json_data)
 
@@ -80,6 +80,11 @@ if __name__ == '__main__':
         type=str,
         help='discord server id'
     )
+    parser.add_argument(
+        '--disable-ssl-verification',
+        action='store_true',
+        help='disable verification of ssl certs when accessing selfoss'
+    )
     args = parser.parse_args()
     
     if not os.path.exists(args.last_update_filename):
@@ -93,7 +98,7 @@ if __name__ == '__main__':
     items_url = f"{args.selfoss}/items?updatedsince={oldpubdate_formatted[:-5]}&items=200"
     print(f'Fetching items from: {items_url}')
 
-    root = get_tree(items_url)
+    root = get_tree(items_url, args.disable_verify_ssl)
     items = new_items(root, args.last_update_filename, oldpubdate)
 
     if not items:
@@ -101,7 +106,7 @@ if __name__ == '__main__':
 
     client = discord.Client()
     load_dotenv()
-    
+
     os.environ['DISCORD_TOKEN'] = args.token
     os.environ['DISCORD_SERVER_ID'] = args.server_id
     token = os.getenv('DISCORD_TOKEN')
