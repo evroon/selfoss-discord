@@ -38,23 +38,27 @@ def get_tree(feed: str, disable_verify_ssl: bool) -> List[Dict[str, Any]]:
     return cast(List[Dict[str, Any]], json_data)
 
 
-def new_items(json_dict: List[Dict[str, Any]], last_update_filename: str, oldpubdate: datetime.datetime) -> List[Any]:
+def new_items(json_dict: List[Dict[str, Any]]) -> List[Any]:
     items = []
-    latest = datetime.datetime.now(timezone) - datetime.timedelta(days=3*365)
 
     for item in json_dict:
         item['timestamp'] = parse_datetime(item['datetime'] + "00")
-
-        if item['timestamp'] > oldpubdate:
-            items.append(item)
-
-        latest = max(latest, item['timestamp'])
-
-    if items:
-        with open(last_update_filename, 'w') as f:
-            f.write(latest.strftime(time_format) + '\n')
+        items.append(item)
 
     return items
+
+
+def mark_as_read(args: Any, items: List[int]) -> None:
+    url = f'{args.selfoss}/mark'
+    data = {
+        'username': args.username,
+        'password': args.password,
+        'ids': items
+    }
+    response = requests.post(url, verify=not args.disable_verify_ssl, data=data)
+
+    if not response.ok:
+        print(response.status_code, response.content)
 
 
 if __name__ == '__main__':
@@ -64,11 +68,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         'selfoss',
-        help='Selfoss intance to fetch data from.'
-    )
-    parser.add_argument(
-        'last_update_filename',
-        help='File to save last run time in.'
+        help='Selfoss instance URL to fetch data from.'
     )
     parser.add_argument(
         '--token',
@@ -85,21 +85,23 @@ if __name__ == '__main__':
         action='store_true',
         help='disable verification of ssl certs when accessing selfoss'
     )
+    parser.add_argument(
+        '--username',
+        type=str,
+        help='selfoss username'
+    )
+    parser.add_argument(
+        '--password',
+        type=str,
+        help='selfoss password'
+    )
     args = parser.parse_args()
 
-    if not os.path.exists(args.last_update_filename):
-        with open(args.last_update_filename, 'w') as f:
-            f.write((datetime.datetime.now() - datetime.timedelta(days=3*365)).strftime(time_format) + '+0000')
-
-    with open(args.last_update_filename, 'r') as handle:
-        oldpubdate_formatted = handle.read().strip()
-        oldpubdate = utc_to_local(parse_datetime(oldpubdate_formatted))
-
-    items_url = f"{args.selfoss}/items?updatedsince={oldpubdate_formatted[:-5]}&items=200"
+    items_url = f"{args.selfoss}/items?type=unread&items=200"
     print(f'Fetching items from: {items_url}')
 
     root = get_tree(items_url, args.disable_verify_ssl)
-    items = new_items(root, args.last_update_filename, oldpubdate)
+    items = new_items(root)
 
     if not items:
         raise SystemExit
@@ -112,6 +114,7 @@ if __name__ == '__main__':
     token = os.getenv('DISCORD_TOKEN')
     server_id = os.getenv('DISCORD_SERVER_ID')
 
+    print(f'Processing {len(items)} items.')
 
     async def my_background_task(items: List[Any]) -> None:
         await client.wait_until_ready()
@@ -148,3 +151,8 @@ if __name__ == '__main__':
 
     client.loop.create_task(my_background_task(items))
     client.run(token)
+
+    mark_as_read(
+        args,
+        [x['id'] for x in items],
+    )
