@@ -50,15 +50,19 @@ def new_items(json_dict: List[Dict[str, Any]]) -> List[Any]:
 
 def mark_as_read(args: Any, items: List[int]) -> None:
     url = f'{args.selfoss}/mark'
-    data = {
-        'username': args.username,
-        'password': args.password,
-        'ids': items
-    }
-    response = requests.post(url, verify=not args.disable_verify_ssl, data=data)
 
-    if not response.ok:
-        print(response.status_code, response.content)
+    # TODO: Send one request for all items, in Selfoss 2.18 an array of items does not work.
+    for item in items:
+        data = {
+            'username': args.username,
+            'password': args.password,
+            'ids': item
+        }
+        response = requests.post(url, verify=not args.disable_verify_ssl, data=data)
+
+        if not response.ok:
+            print(response.status_code, response.content)
+            break
 
 
 if __name__ == '__main__':
