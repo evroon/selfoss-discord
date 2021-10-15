@@ -24,4 +24,4 @@ You can update selfoss and send messages to discord hourly by opening crontab (`
 0 * * * * sudo -Hu www-data php /var/www/selfoss/cliupdate.php && sudo -Hu <username> python3 /path/to/selfoss.py https://selfoss.domain.com /path/to/last-update
 ```
 
-But using a systemd service and timer would be neater.
+But using a systemd service and timer would be neater, such as this [service](https://github.com/evroon/concordia/blob/master/lib/systemd/system/selfoss-update.service) and [timer](https://github.com/evroon/concordia/blob/master/lib/systemd/system/selfoss-update.timer).
