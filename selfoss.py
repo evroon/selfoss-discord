@@ -17,6 +17,7 @@ time_format = "%Y-%m-%d %H:%M:%S%z"
 time_format_display = "%d %b %Y at %H:%M"
 max_message_chars = 2000
 
+
 # Type cast helper
 T = TypeVar('T')
 def assert_type(arg: Optional[T]) -> T:
@@ -32,13 +33,18 @@ def utc_to_local(utc_dt: datetime.datetime) -> datetime.datetime:
     return utc_dt.astimezone(tz=timezone)
 
 
-def get_tree(feed: str, disable_verify_ssl: bool) -> List[Dict[str, Any]]:
-    req = requests.get(feed, verify=not disable_verify_ssl)
-    json_data = json.loads(req.content)
-    return cast(List[Dict[str, Any]], json_data)
+def get_tree(feed: str, disable_verify_ssl: bool) -> List[Any]:
+    """Get items from selfoss.
 
+    Args:
+        feed (str): the URL to load
+        disable_verify_ssl (bool): Whether or not to disable SSL verification
 
-def new_items(json_dict: List[Dict[str, Any]]) -> List[Any]:
+    Returns:
+        List[Dict[str, Any]]: [description]
+    """
+    response = requests.get(feed, verify=not disable_verify_ssl)
+    json_dict = cast(List[Dict[str, Any]], response.json())
     items = []
 
     for item in json_dict:
@@ -49,6 +55,12 @@ def new_items(json_dict: List[Dict[str, Any]]) -> List[Any]:
 
 
 def mark_as_read(args: Any, items: List[int]) -> None:
+    """Mark items as read.
+
+    Args:
+        args (Any): The argparse arguments
+        items (List[int]): item ids that have to be marked as read
+    """
     url = f'{args.selfoss}/mark'
 
     # TODO: Send one request for all items, in Selfoss 2.18 an array of items does not work.
@@ -104,8 +116,7 @@ if __name__ == '__main__':
     items_url = f"{args.selfoss}/items?type=unread&items=200"
     print(f'Fetching items from: {items_url}')
 
-    root = get_tree(items_url, args.disable_verify_ssl)
-    items = new_items(root)
+    items = get_tree(items_url, args.disable_verify_ssl)
 
     if not items:
         raise SystemExit
@@ -127,7 +138,7 @@ if __name__ == '__main__':
         for item in items:
             source = item['sourcetitle']
             guild = client.get_guild(int(assert_type(server_id)))
-            channel_name = source.lower().replace(' ', '-')
+            channel_name = source.lower().replace(' ', '-').replace('.', '-')
             channel = discord.utils.get(guild.channels, name=channel_name)
 
             if channel == None:
