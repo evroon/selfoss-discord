@@ -139,7 +139,7 @@ if __name__ == '__main__':
             source = item['sourcetitle']
             guild = client.get_guild(int(assert_type(server_id)))
             channel_name = source.lower().replace(' ', '-').replace('.', '-')
-            channel = discord.utils.get(guild.channels, name=channel_name)
+            channel = discord.utils.get(guild.text_channels, name=channel_name)
 
             if channel == None:
                 channel = await guild.create_text_channel(channel_name)
