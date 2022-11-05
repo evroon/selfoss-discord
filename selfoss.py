@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 from typing import Dict, List, Any, cast, Optional, TypeVar
 
 timezone = pytz.timezone('Europe/Amsterdam')
-time_format = "%Y-%m-%d %H:%M:%S%z"
 time_format_display = "%d %b %Y at %H:%M"
 max_message_chars = 2000
 
@@ -26,7 +25,7 @@ def assert_type(arg: Optional[T]) -> T:
 
 
 def parse_datetime(time_str: str) -> datetime.datetime:
-    return datetime.datetime.strptime(time_str, time_format)
+    return datetime.datetime.fromisoformat(time_str)
 
 
 def utc_to_local(utc_dt: datetime.datetime) -> datetime.datetime:
