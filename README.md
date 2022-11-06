@@ -1,4 +1,5 @@
 # selfoss-discord
+[![build](https://github.com/evroon/selfoss-discord/actions/workflows/build.yaml/badge.svg)](https://github.com/evroon/selfoss-discord/actions/workflows/build.yaml)
 
 Send RSS updates from Selfoss to Discord.
 
@@ -24,4 +25,4 @@ SELFOSS_USERNAME="selfoss username"
 SELFOSS_PASSWORD="selfoss password"
 ```
 
-Use systemd to run the update periodically, like this [service](https://github.com/evroon/concordia/blob/master/lib/systemd/system/selfoss-update.service) and [timer](https://github.com/evroon/concordia/blob/master/lib/systemd/system/selfoss-update.timer).
+Use systemd to run the update periodically, like this [service](https://github.com/evroon/concordia/blob/master/ansible/roles/selfoss/templates/selfoss-update.service.j2) and [timer](https://github.com/evroon/concordia/blob/master/ansible/roles/selfoss/templates/selfoss-update.timer.j2).
