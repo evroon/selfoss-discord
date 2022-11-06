@@ -1,3 +1,5 @@
-.mypy_cache
 .env
-last-update
+
+# Added by cargo
+/target
+Cargo.lock

@@ -1,7 +1,5 @@
 # selfoss-discord
-
-
-[![Check Python syntax and typing](https://github.com/evroon/selfoss-discord/actions/workflows/mypy.yaml/badge.svg)](https://github.com/evroon/selfoss-discord/actions/workflows/mypy.yaml)
+[![build](https://github.com/evroon/selfoss-discord/actions/workflows/build.yaml/badge.svg)](https://github.com/evroon/selfoss-discord/actions/workflows/build.yaml)
 
 Send RSS updates from Selfoss to Discord.
 
@@ -12,16 +10,19 @@ Preview of an RSS update message in Discord: (using [msfs-rss](https://github.co
 ![Preview](https://raw.githubusercontent.com/evroon/selfoss-discord/main/etc/preview.png)
 
 ## Usage
+First, install openssl:
+```
+sudo apt-get install pkg-config libssl-dev
+```
+
 Create a bot in Discord with permissions to send manages and manage channels for the server you want to send messages to.
 Create a file called `.env` with the following content:
 ```bash
 DISCORD_TOKEN="your discord bot token"
 DISCORD_SERVER_ID="the ID of your server/guild"
+SELFOSS_BASE_URL="url where selfoss lives"
+SELFOSS_USERNAME="selfoss username"
+SELFOSS_PASSWORD="selfoss password"
 ```
 
-You can update selfoss and send messages to discord hourly by opening crontab (`sudo crontab -e`) adding the following line:
-```bash
-0 * * * * sudo -Hu www-data php /var/www/selfoss/cliupdate.php && sudo -Hu <username> python3 /path/to/selfoss.py https://selfoss.domain.com /path/to/last-update
-```
-
-But using a systemd service and timer would be neater, such as this [service](https://github.com/evroon/concordia/blob/master/lib/systemd/system/selfoss-update.service) and [timer](https://github.com/evroon/concordia/blob/master/lib/systemd/system/selfoss-update.timer).
+Use systemd to run the update periodically, like this [service](https://github.com/evroon/concordia/blob/master/ansible/roles/selfoss/templates/selfoss-update.service.j2) and [timer](https://github.com/evroon/concordia/blob/master/ansible/roles/selfoss/templates/selfoss-update.timer.j2).
