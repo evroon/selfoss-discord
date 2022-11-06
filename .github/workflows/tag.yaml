@@ -1,0 +1,23 @@
+name: release
+
+on: [tag, workflow_dispatch]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: build and test
+        run: cargo build --release && cargo test --release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with: 
+          name: release
+          path: target/release/selfoss-discord
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "$(git tag | sort -V | tail -1)" --generate-notes "target/release/selfoss-discord"
