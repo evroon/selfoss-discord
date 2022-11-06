@@ -3,6 +3,7 @@ requests
 discord
 bs4
 python-dotenv
+python-dateutil
 mypy
 pytz
 types-requests
