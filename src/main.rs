@@ -23,11 +23,12 @@ async fn send_messages(
     item_list: Vec<SelfossItem>,
     mut channel_map: HashMap<String, String>,
 ) {
-    println!("Found {} messages to send", item_list.len());
+    println!("Found max {} messages to send", item_list.len());
 
     for item in &item_list {
         let name = item.clone().get_discord_channel_name();
         let channel = channel_map.get(name.clone().as_str());
+        let content = item.clone().get_discord_message_content();
 
         if channel.is_none() {
             let c = create_channel(&config, name.clone().as_str()).await;
@@ -36,11 +37,11 @@ async fn send_messages(
             }
         }
 
-        if item.content.len() > 0 {
+        if item.content.len() > 0 && content.len() > 0 {
             let message_result = post_message(
                 &config,
                 channel_map.get(name.clone().as_str()).unwrap(),
-                &item.clone().get_discord_message_content(),
+                &content,
             )
             .await;
 
