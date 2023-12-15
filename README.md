@@ -1,5 +1,6 @@
 # selfoss-discord
 [![build](https://github.com/evroon/selfoss-discord/actions/workflows/build.yaml/badge.svg)](https://github.com/evroon/selfoss-discord/actions/workflows/build.yaml)
+[![codecov](https://codecov.io/gh/evroon/selfoss-discord/graph/badge.svg?token=626FVGQH49)](https://codecov.io/gh/evroon/selfoss-discord)
 
 Send RSS updates from Selfoss to Discord.
 
