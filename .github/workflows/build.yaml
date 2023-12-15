@@ -46,6 +46,9 @@ jobs:
 
       - uses: Swatinem/rust-cache@v1
 
+      - name: Install cargo-llvm-cov
+        run: cargo +stable install cargo-llvm-cov --locked
+
       - name: Run coverage
         run: cargo llvm-cov --json
 
