@@ -14,8 +14,24 @@ jobs:
         with:
           workspaces: target
 
-      - name: Format check
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          components: llvm-tools, rustfmt, clippy
+
+      - name: Install cargo-llvm-cov and cargo-make
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov,cargo-make
+
+      - name: Generate coverage
+        run: cargo make coverage
+
+      - name: Run cargo-fmt
         run: cargo-fmt
+
+      - name: Run clippy
+        run: cargo clippy -- --deny warnings
 
       - name: Build
         run: cargo build --release
@@ -33,3 +49,4 @@ jobs:
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
