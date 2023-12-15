@@ -8,10 +8,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set up caching
-        uses: Swatinem/rust-cache@v2
-
+      - uses: Swatinem/rust-cache@v1
 
       - name: Build
         run: cargo build
@@ -27,30 +24,25 @@ jobs:
 
 
   coverage:
-    name: Coverage
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        rust: [stable]
-    runs-on: ${{ matrix.os }}
+    name: coverage
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - uses: Swatinem/rust-cache@v1
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ matrix.rust }}
+          toolchain: stable
           override: true
           components: llvm-tools-preview
-
-      - uses: Swatinem/rust-cache@v1
 
       - name: Install cargo-llvm-cov
         run: cargo +stable install cargo-llvm-cov --locked
 
       - name: Run coverage
-        run: cargo llvm-cov --json
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
@@ -58,13 +50,12 @@ jobs:
           files: coverage/*.lcov
 
   lints:
-    name: Lints
+    name: lints
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-        with:
-          submodules: true
+      - uses: actions/checkout@v2
+      - uses: Swatinem/rust-cache@v1
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -73,8 +64,6 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt, clippy
-
-      - uses: Swatinem/rust-cache@v1
 
       - name: Run cargo-fmt
         run: cargo-fmt

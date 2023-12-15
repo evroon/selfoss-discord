@@ -15,8 +15,6 @@ reqwest-middleware = "0.2.0"
 async-trait = "0.1"
 task-local-extensions = "0.1"
 cargo-make = "0.37.5"
-cargo-llvm-cov = "0.5.38"
-xtask = "0.1.0"
 
 [dev-dependencies]
 httpmock = "0.6.8"
