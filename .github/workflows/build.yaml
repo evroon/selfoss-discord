@@ -14,10 +14,13 @@ jobs:
         with:
           workspaces: target
 
-      - name: Install Rust toolchain
+      - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
-          components: llvm-tools, rustfmt, clippy
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
 
       - name: Install cargo-llvm-cov and cargo-make
         uses: taiki-e/install-action@v2
