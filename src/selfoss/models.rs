@@ -23,10 +23,7 @@ fn truncate(s: &str, max_chars: usize) -> &str {
 
 impl SelfossItem {
     pub fn get_discord_channel_name(self) -> String {
-        self.sourcetitle
-            .replace(' ', "-")
-            .replace('.', "-")
-            .to_lowercase()
+        self.sourcetitle.replace([' ', '.'], "-").to_lowercase()
     }
     pub fn get_discord_message_content(self) -> String {
         let truncated_string = truncate(&self.content, 2000).to_string();
