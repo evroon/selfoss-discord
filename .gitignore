@@ -3,3 +3,5 @@
 # Added by cargo
 /target
 Cargo.lock
+
+cargo-test*
