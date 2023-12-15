@@ -34,7 +34,7 @@ where
         .await?
         .json::<D>()
         .await
-        .or_else(|r| Err(RequestError::Reqwest(r)))
+        .map_err(RequestError::Reqwest)
 }
 
 pub async fn get_channels(config: &Config) -> Result<Vec<DiscordChannel>, RequestError> {

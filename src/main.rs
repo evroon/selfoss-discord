@@ -34,20 +34,20 @@ async fn send_messages(
         let content = item.clone().get_discord_message_content();
 
         if channel.is_none() {
-            let c = create_channel(&config, name.clone().as_str()).await?;
+            let c = create_channel(config, name.clone().as_str()).await?;
             channel_map.insert(name.clone(), c.id);
         }
 
-        if item.content.len() > 0 && content.len() > 0 {
+        if !item.content.is_empty() && !content.is_empty() {
             post_message(
-                &config,
+                config,
                 channel_map.get(name.clone().as_str()).expect("msg"),
                 &content,
             )
             .await?;
         }
 
-        mark_items_as_read(&config, item.id).await?;
+        mark_items_as_read(config, item.id).await?;
     }
     Ok(())
 }
