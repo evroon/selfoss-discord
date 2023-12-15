@@ -20,6 +20,9 @@ jobs:
       - name: Build
         run: cargo build --release
 
+      - name: Tests
+        run: cargo test
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
