@@ -41,7 +41,7 @@ async fn send_messages(
         if !item.content.is_empty() && !content.is_empty() {
             post_message(
                 config,
-                channel_map.get(name.clone().as_str()).expect("msg"),
+                channel_map.get(name.clone().as_str()).unwrap(),
                 &content,
             )
             .await?;
