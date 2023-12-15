@@ -9,6 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set up caching
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: target
+
       - name: Format check
         run: cargo-fmt
 
