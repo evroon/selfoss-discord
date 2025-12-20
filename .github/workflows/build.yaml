@@ -1,6 +1,13 @@
 name: build
 
-on: [push, workflow_dispatch]
+permissions:
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'master'
 
 jobs:
   build:
@@ -35,41 +42,7 @@ jobs:
           name: release
           path: target/release/selfoss-discord
 
-
-  coverage:
-    name: coverage
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-build-stable-${{ hashFiles('**/Cargo.toml') }}
-
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
-
-      - name: Run coverage
-        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-
-      - name: Upload to codecov.io
-        uses: codecov/codecov-action@v3
-        with:
-          files: lcov.info
-
-  lint:
-    name: lint
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -95,3 +68,13 @@ jobs:
       - name: Check format
         run: cargo fmt --all -- --check
 
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Run coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v3
+        with:
+          files: lcov.info
