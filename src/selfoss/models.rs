@@ -2,9 +2,6 @@ use chrono::{DateTime, Utc};
 use scraper::Html;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SelfossItemMarkedReadResponse {}
-
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct SelfossItem {
     pub title: String,
