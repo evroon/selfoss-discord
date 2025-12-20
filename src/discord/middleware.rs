@@ -31,11 +31,11 @@
 #![warn(missing_docs)]
 #![warn(rustdoc::missing_doc_code_examples)]
 
+use http::Extensions;
 use reqwest::{header::RETRY_AFTER, Request, Response};
 use reqwest_middleware::Middleware;
 use reqwest_middleware::{Next, Result};
 use std::time::{Duration, SystemTime};
-use task_local_extensions::Extensions;
 use tokio::sync::RwLock;
 
 /// The `RetryAfterMiddleware` is a [`Middleware`] that adds support for the `Retry-After`
