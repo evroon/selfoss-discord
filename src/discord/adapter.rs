@@ -165,6 +165,6 @@ mod test {
             _ => panic!("expected Reqwest error"),
         }
         // We do three retries with exponential backoff.
-        send_message_mock.assert_hits(4);
+        send_message_mock.assert_calls(4);
     }
 }
