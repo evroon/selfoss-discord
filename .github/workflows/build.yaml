@@ -7,9 +7,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: Swatinem/rust-cache@v1
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-build-stable-${{ hashFiles('**/Cargo.toml') }}
 
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          
       - name: Check
         run: cargo check
 
@@ -28,11 +41,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: Swatinem/rust-cache@v1
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-build-stable-${{ hashFiles('**/Cargo.toml') }}
 
-      - name: Install Rust
-        run: rustup update stable
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
@@ -45,24 +68,30 @@ jobs:
         with:
           files: lcov.info
 
-  lints:
-    name: lints
+  lint:
+    name: lint
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: Swatinem/rust-cache@v1
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v4
         with:
-          profile: minimal
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-build-stable-${{ hashFiles('**/Cargo.toml') }}
+
+      - uses: actions-rs/toolchain@v1
+        with:
           toolchain: stable
           override: true
-          components: rustfmt, clippy
-
-      - name: Run cargo-fmt
-        run: cargo-fmt
 
       - name: Run clippy
-        run: cargo clippy -- --deny warnings
+        run: cargo clippy --all-targets --all-features -- -D warnings
+        
+      - name: Check format
+        run: cargo fmt --all -- --check
+
